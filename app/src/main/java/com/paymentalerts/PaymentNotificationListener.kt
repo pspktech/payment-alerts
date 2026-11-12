@@ -27,11 +27,6 @@ class PaymentNotificationListener : NotificationListenerService() {
         super.onDestroy()
     }
 
-    override fun onDestroy() {
-        PaymentSoundPlayer.shutdown()
-        super.onDestroy()
-    }
-
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (sbn.packageName !in paymentApps) return
         if (!UserPrefs.isSoundEnabled(applicationContext)) return
