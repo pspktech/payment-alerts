@@ -3,6 +3,7 @@ package com.paymentalerts
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import java.util.Locale
 
 class PaymentNotificationListener : NotificationListenerService() {
 
@@ -19,7 +20,17 @@ class PaymentNotificationListener : NotificationListenerService() {
         "పంపారు", "వచ్చాయి", "प्राप्त", "मिले"
     )
 
-    private val seen = mutableSetOf<String>()
+    private val seen = LinkedHashSet<String>()
+
+    override fun onDestroy() {
+        PaymentSoundPlayer.shutdown()
+        super.onDestroy()
+    }
+
+    override fun onDestroy() {
+        PaymentSoundPlayer.shutdown()
+        super.onDestroy()
+    }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (sbn.packageName !in paymentApps) return
@@ -33,7 +44,7 @@ class PaymentNotificationListener : NotificationListenerService() {
         val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
         val text  = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
         val big   = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString() ?: ""
-        val body  = "$title $text $big".lowercase()
+        val body  = "$title $text $big".lowercase(Locale.ROOT)
 
         if (keywords.none { body.contains(it) }) return
 
